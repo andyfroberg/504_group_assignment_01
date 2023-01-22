@@ -1,16 +1,3 @@
-
-
-############ TO DO ###################
-#
-# [X] Read in each minefield individually
-# [ ] Based on where we check in the minefield, call check_nw, etc.
-#     appropriately (e.g., if we are in position (0,0) in the current
-#     minefield, then don't call check_nw).
-#
-#
-#
-#
-
 # Citations used
 # Python Documentation - 7.2 Reading and Writing Files
 # https://docs.python.org/3/tutorial/inputoutput.html
@@ -69,7 +56,7 @@ class MinesweeperSolver2:
         field_size = field_str[0].split(" ")
         field_size[0], field_size[1] = int(field_size[0]), int(field_size[1])
         self.__field_start += 1  # Go to the next line after reading the size
-        self.__field_end = self.__field_start + field_size[0]  # USED TO HAVE - 1 at the end
+        self.__field_end = self.__field_start + field_size[0]
 
         # read the input
         for i in range(self.__field_start, self.__field_end):
@@ -236,6 +223,6 @@ class MinesweeperSolver2:
 
 
 if __name__ == "__main__":
-    m = MinesweeperSolver2("mines.txt", "minesweeper_output.txt")
-    m.solve_all_minefields()
-    m.write_output()
+    ms = MinesweeperSolver2("mines.txt", "minesweeper_output.txt")
+    ms.solve_all_minefields()
+    ms.write_output()
