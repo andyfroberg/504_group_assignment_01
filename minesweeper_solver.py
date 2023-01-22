@@ -2,7 +2,7 @@
 # Python Documentation - 7.2 Reading and Writing Files
 # https://docs.python.org/3/tutorial/inputoutput.html
 
-class MinesweeperSolver2:
+class MinesweeperSolver:
     """
     This class takes a given minesweeper puzzle as text input (in a specific
     minesweeper format), solves the puzzle, then outputs the solved puzzle
@@ -215,14 +215,36 @@ class MinesweeperSolver2:
         if self.__current_field[i + 1][j + 1] == "*":
             self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
 
-    def DEBUG_get_self__text(self):
-        return self.__text
+    ######################################################
+    ########### Unit Test Helper Methods #################
+    ######################################################
+    # The following helper methods are for testing the program and include
+    # docstrings to satisfy the assignment requirements (even though the
+    # following methods are not part of the public interface).
+    def get_current_field(self):
+        return self.__current_field
 
-    def DEBUG_get_self__output_text(self):
+    def get_output_text(self):
         return self.__output_text
+
+    def get_input_path(self):
+        return self.__input_path
+
+    def get_output_path(self):
+        return self.__output_path
+
+    def get_field_count(self):
+        return self.__field_count
+
+    def get_field_start(self):
+        return self.__field_start
+
+    def get_field_end(self):
+        return self.__field_end
+
 
 
 if __name__ == "__main__":
-    ms = MinesweeperSolver2("mines.txt", "minesweeper_output.txt")
+    ms = MinesweeperSolver("mines.txt", "minesweeper_output.txt")
     ms.solve_all_minefields()
     ms.write_output()

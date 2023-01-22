@@ -51,8 +51,6 @@ class MinesweeperInputGenerator:
         for i in range(n):
             self.generate_random_field()
 
-        self.add_terminating_str()
-
     def add_terminating_str(self):
         self.__full_text += f"0 0\n"
 
@@ -66,6 +64,12 @@ class MinesweeperInputGenerator:
         with open(self.__output_path, "w", encoding='utf-8') as m:
             m.write(self.__output_text)
 
+    ######################################################
+    ########### Unit Test Helper Methods #################
+    ######################################################
+    # The following helper methods are for testing the program and include
+    # docstrings to satisfy the assignment requirements (even though the
+    # following methods are not part of the public interface).
     def get_text(self):
         return self.__full_text
 
@@ -73,5 +77,6 @@ class MinesweeperInputGenerator:
 if __name__ == "__main__":
     mig = MinesweeperInputGenerator("mines.txt")
     mig.generate_n_random_minefields(10)
+    mig.add_terminating_str()
     # mig.generate_field("4 10\n***.....**\n***.....**\n***.....**\n***.....**\n")
     print(mig.get_text())
