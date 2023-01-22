@@ -57,19 +57,32 @@ class MinesweeperSolver2:
     def solve_all_minefields(self):
         while self.__text[self.__field_end][0:] != "0 0\n":
             self.get_next_minefield()
-            print(f"curr line is {self.__field_start}")
             self.get_hints()
+    def get_next_minefield(self):
+
+        # Clear current minefield and set new start marker
+        self.__current_field = []
+        self.__field_start = self.__field_end
+
+        # Get the size of the next minefield
+        field_str = self.__text[self.__field_start].split("\n")
+        field_size = field_str[0].split(" ")
+        field_size[0], field_size[1] = int(field_size[0]), int(field_size[1])
+        self.__field_start += 1  # Go to the next line after reading the size
+        self.__field_end = self.__field_start + field_size[0]  # USED TO HAVE - 1 at the end
+
+        # read the input
+        for i in range(self.__field_start, self.__field_end):
+            # Remove "\n"
+            current_row_no_newline = self.__text[i].split("\n")[0]
+            current_list_no_newline = list(current_row_no_newline)
+            self.__current_field.append(current_list_no_newline)
 
     def get_hints(self):
         # The first field marking should not have a new line before it.
         # All other field markings should have a new line before them.
         self.__output_text += f'Field #{self.__field_count}:\n'
         self.__field_count += 1
-        # # Include a new line between each minefield output.
-        # if i != 0 and self.__text[i][0] != "." \
-        #         and self.__text[i][0] != "*":
-        #     self.__output_text += f'\nField #{self.__field_count}:\n'
-        #     self.__field_count += 1
 
         if self.__field_end - self.__field_start == 0:  # Single row
             # if len(self.__current_field[self.__field_start]) <= 1:
@@ -83,36 +96,18 @@ class MinesweeperSolver2:
             for j in range(len(self.__current_field[i])):
                 if self.__current_field[i][j] == "*":
                     continue
-                elif self.__current_field[i][j] == ".":
+                else:  # "."
                     self.__current_field[i][j] = "0"
                     self.check_neighbors(i, j)
-                else:
-                    # self.check_neighbors(i, j)
-                    # self.__output_text += "".join(self.__text[i])
-                    pass
 
-        print(f"self.__current_field: {self.__current_field}\n")
+        for row in self.__current_field:
+            row_str = ""
+            for col in row:
+                row_str += col
+            self.__output_text += f"{row_str}\n"
 
-    def get_next_minefield(self):
-
-        # Clear current minefield and set new start marker
-        self.__current_field = []
-        self.__field_start = self.__field_end
-
-        # Get the size of the next minefield
-        field_str = self.__text[self.__field_start].split("\n")
-        field_size = field_str[0].split(" ")
-        field_size[0], field_size[1] = int(field_size[0]), int(field_size[1])
-        self.__field_start += 1  # Go to the next line after reading the size
-        self.__field_end = self.__field_start + field_size[0]  # USED TO HAVE - 1 at the end
-        print(f"current field size: {field_size}")
-
-        # read the input
-        for i in range(self.__field_start, self.__field_end):
-            # Remove "\n"
-            current_row_no_newline = self.__text[i].split("\n")[0]
-            current_list_no_newline = list(current_row_no_newline)
-            self.__current_field.append(current_list_no_newline)
+        # Add a newline between each field
+        self.__output_text += f"\n"
 
     def check_neighbors(self, i, j):
         # Special case where there is a single row/col
@@ -236,6 +231,11 @@ class MinesweeperSolver2:
     def DEBUG_get_self__text(self):
         return self.__text
 
+    def DEBUG_get_self__output_text(self):
+        return self.__output_text
+
+
 if __name__ == "__main__":
     m = MinesweeperSolver2("mines.txt", "minesweeper_output.txt")
     m.solve_all_minefields()
+    m.write_output()
