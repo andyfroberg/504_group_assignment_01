@@ -15,7 +15,7 @@
 # Python Documentation - 7.2 Reading and Writing Files
 # https://docs.python.org/3/tutorial/inputoutput.html
 
-class MinesweeperSolver:
+class MinesweeperSolver2:
     """
     This class takes a given minesweeper puzzle as text input (in a specific
     minesweeper format), solves the puzzle, then outputs the solved puzzle
@@ -87,9 +87,11 @@ class MinesweeperSolver:
                     self.__current_field[i][j] = "0"
                     self.check_neighbors(i, j)
                 else:
-                    self.check_neighbors(i, j)
+                    # self.check_neighbors(i, j)
                     # self.__output_text += "".join(self.__text[i])
-            print(self.__current_field)
+                    pass
+
+        print(f"self.__current_field: {self.__current_field}\n")
 
     def get_next_minefield(self):
 
@@ -103,7 +105,7 @@ class MinesweeperSolver:
         field_size[0], field_size[1] = int(field_size[0]), int(field_size[1])
         self.__field_start += 1  # Go to the next line after reading the size
         self.__field_end = self.__field_start + field_size[0]  # USED TO HAVE - 1 at the end
-        print(field_size)
+        print(f"current field size: {field_size}")
 
         # read the input
         for i in range(self.__field_start, self.__field_end):
@@ -113,23 +115,16 @@ class MinesweeperSolver:
             self.__current_field.append(current_list_no_newline)
 
     def check_neighbors(self, i, j):
-        """
-        Calls neighbor checking helper functions to determine if there is a
-        mine in the surrounding cells.
-        :param i: The current row 'position' in self.__text.
-        :param j: The current column 'position' in self.__text.
-        :return: None
-        """
-
         # Special case where there is a single row/col
-        if len(self.__current_field) == 1 and len(self.__current_field[i]) == 1:
+        if len(self.__current_field) == 1 and len(
+                self.__current_field[i]) == 1:
             if self.__current_field[i][j] == "*":
                 return
             else:  # "."
                 self.__current_field[i][j] = "0"
                 return
 
-        # Special case where there is a single row (of 1 > length < 100)
+        # Special case where there is a single row (of 1 > length <= 100)
         if len(self.__current_field) == 1 and len(self.__current_field[i]) > 1:
             if i == 0:
                 if j == 0:
@@ -141,6 +136,17 @@ class MinesweeperSolver:
                     self.check_east(i, j)
             return
 
+        # Special case where there is a single column (of 1 > height <= 100)
+        if len(self.__current_field) > 1 and len(
+                self.__current_field[i]) == 1:
+            if i == 0:
+                self.check_south(i, j)
+            elif i == len(self.__current_field) - 1:
+                self.check_north(i, j)
+            else:  # Middle columns
+                self.check_north(i, j)
+                self.check_south(i, j)
+            return
 
         if i == 0:  # Top row
             if j == 0:  # Left column
@@ -196,84 +202,40 @@ class MinesweeperSolver:
                 self.check_southeast(i, j)
 
     def check_north(self, i, j):
-        if i == 0:  # If top row -> don't check north
-            return
-        else:
-            if self.__current_field[i - 1][j] == "*":
-                self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
+        if self.__current_field[i - 1][j] == "*":
+            self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
 
     def check_northwest(self, i, j):
-        if i == 0:  # If top row -> can't check northwest
-            return
-        elif j == 0:  # If left column -> can't check northwest
-            return
-        else:
-            if self.__current_field[i - 1][j - 1] == "*":
-                self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
+        if self.__current_field[i - 1][j - 1] == "*":
+            self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
 
     def check_northeast(self, i, j):
-        if i == 0:  # If top row -> can't check northeast
-            return
-        elif j == len(self.__current_field[i]) - 2:  # If right column -> can't check northeast
-            return
-        else:
-            if self.__current_field[i - 1][j + 1] == "*":
-                self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
+        if self.__current_field[i - 1][j + 1] == "*":
+            self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
 
     def check_west(self, i, j):
-        if j == 0:  # If left col -> don't check west
-            return
-        else:
-            if self.__current_field[i][j - 1] == "*":
-                self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
+        if self.__current_field[i][j - 1] == "*":
+            self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
 
     def check_east(self, i, j):
-        if j == len(self.__current_field[i]) - 2:  # If right col -> don't check east
-            return
-        else:
-            if self.__current_field[i][j + 1] == "*":
-                self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
+        if self.__current_field[i][j + 1] == "*":
+            self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
 
     def check_south(self, i, j):
-        # if i == len(self.__text) - 2:  # If bottom row -> don't check south
-        #     return
-        # else:
-        #     if self.__text[i + 1][j] == "*":
-        #         self.__text[i][j] = str(int(self.__text[i][j]) + 1)
-        if self.__current_field[i + 1][0] != "*" and self.__current_field[i + 1][0] != ".":
-            return
-        else:
-            if self.__current_field[i + 1][j] == "*":
-                self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
+        if self.__current_field[i + 1][j] == "*":
+            self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
 
     def check_southwest(self, i, j):
-        if self.__current_field[i + 1][0] != "*" and self.__current_field[i + 1][0] != ".":
-            return
-        elif j == 0:  # If left column -> can't check southwest
-            return
-        else:
-            if self.__current_field[i + 1][j - 1] == "*":
-                self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
+        if self.__current_field[i + 1][j - 1] == "*":
+            self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
 
     def check_southeast(self, i, j):
-        if self.__current_field[i + 1][0] != "*" and self.__current_field[i + 1][0] != ".":
-            return
-        elif j == len(self.__current_field[i]) - 1:  # If right column -> can't check southeast
-            return
-        else:
-            if self.__current_field[i + 1][j + 1] == "*":
-                self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
+        if self.__current_field[i + 1][j + 1] == "*":
+            self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
 
-    def add_final_newline(self):
-        """
-        The "official_output.txt" file has two newlines at the bottom of the
-        file. In order to make the output identical, a final newline needs to
-        be added to the end of the output file.
-        :return: None
-        """
-        self.__output_text += "\n"
-
+    def DEBUG_get_self__text(self):
+        return self.__text
 
 if __name__ == "__main__":
-    m = MinesweeperSolver("simple.txt", "minesweeper_output.txt")
+    m = MinesweeperSolver2("mines.txt", "minesweeper_output.txt")
     m.solve_all_minefields()
