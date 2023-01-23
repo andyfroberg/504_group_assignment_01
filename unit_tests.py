@@ -13,9 +13,6 @@ test for invalid data.
 - Be sure and name your test methods so they describe the test.
 """
 
-
-
-
 # Test current cell is top left corner
 
 # Test current cell is top right corner
@@ -83,34 +80,32 @@ class MineweeperSolverTests(unittest.TestCase):
     ########################################
     ########## ANDREW'S TESTS  #############
     ########################################
+
+    def setUp(self):
+        self.test_output_1x1_mine = open("test_output_1x1_mine.txt").readlines()
+
+    def tearDown(self):
+        self.test_file_1.close()
+
     def test_init_object_type(self):
         ms = MinesweeperSolver("mines.txt", "test_output.txt")
-        self.assertEqual(type(ms) == MinesweeperSolver, True, "Constructor should create a MinesweeperSolver object")
+        self.assertEqual(type(ms) == MinesweeperSolver, True,
+                         "Constructor should create a MinesweeperSolver object")
 
     # Test current cell is a "middle" cell of a 3 x 3 with one mine (northwest)
     # Test [ [*, ., .],  "c" denotes current cell
     #        [., c, .],
     #        [., ., .] ]
     def test_output_1x1_mine(self):
-        mig = MinesweeperInputGenerator("unit_test_input.txt")
-        mig.generate_field("*\n")
-        mig.add_terminating_str()
-        mig_output = mig.get_text()
-
-        ms = MinesweeperSolver("unit_test_input.txt", "test_output.txt")
+        ms = MinesweeperSolver("test_output_1x1_mine.txt", "test_output.txt")
         ms.solve_all_minefields()
-        ms.write_output()
 
-        correct_output = "*\n0 0\n"
-        with open("test_output.txt", 'r', encoding='utf-8') as f:
-            ms_output = f.readlines()
-            self.assertEqual(correct_output, ms_output, True)
+        correct_output = "Field #1:\n*\n"
+        self.assertEqual(correct_output, ms.get_output_text(), True)
 
     ########################################
     ########## FIKADU'S TESTS  #############
     ########################################
-
-
 
     ##########################################
     ########## TEMESGEN'S TESTS  #############
@@ -118,4 +113,5 @@ class MineweeperSolverTests(unittest.TestCase):
 
 
 if __name__ == '__main__':
+
     unittest.main()

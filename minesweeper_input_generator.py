@@ -75,7 +75,7 @@ class MinesweeperInputGenerator:
 
 
 if __name__ == "__main__":
-    mig = MinesweeperInputGenerator("mines.txt")
+    mig = MinesweeperInputGenerator("test_file_1.txt")
     mig.generate_n_random_minefields(10)
     mig.add_terminating_str()
     # mig.generate_field("4 10\n***.....**\n***.....**\n***.....**\n***.....**\n")

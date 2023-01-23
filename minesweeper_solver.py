@@ -224,6 +224,9 @@ class MinesweeperSolver:
     def get_current_field(self):
         return self.__current_field
 
+    def get_text(self):
+        return self.__text
+
     def get_output_text(self):
         return self.__output_text
 
@@ -242,9 +245,13 @@ class MinesweeperSolver:
     def get_field_end(self):
         return self.__field_end
 
+    def set_text(self, text):
+        self.__text = text
+
 
 
 if __name__ == "__main__":
     ms = MinesweeperSolver("mines.txt", "minesweeper_output.txt")
+    print(ms.get_text())
     ms.solve_all_minefields()
     ms.write_output()
