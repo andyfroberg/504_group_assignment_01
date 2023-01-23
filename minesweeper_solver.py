@@ -45,6 +45,7 @@ class MinesweeperSolver:
         while self.__text[self.__field_end][0:] != "0 0\n":
             self.get_next_minefield()
             self.get_hints()
+
     def get_next_minefield(self):
 
         # Clear current minefield and set new start marker
