@@ -32,7 +32,24 @@ class MinesweeperInputGenerator:
         self.__full_text += f"{rows} {cols}\n"
         self.__full_text += new_field
 
-    def generate_field(self, minefield):
+    def generate_field_uniform(self, rows, cols, all_mines=False):
+        filler = ""
+        if all_mines:
+            filler = "*"
+        else:
+            filler = "."
+
+        new_field = ""
+        for i in range(rows):
+            new_row = ""
+            for j in range(cols):
+                new_row += filler
+            new_field += f"{new_row}\n"
+
+        self.__full_text += f"{rows} {cols}\n"
+        self.__full_text += new_field
+
+    def generate_field_with_string(self, minefield):
         if type(minefield) is not str:
             raise AttributeError("This method accepts only a string "
                                  "of '*' or '.' characters to generate "
@@ -75,7 +92,8 @@ class MinesweeperInputGenerator:
 
 
 if __name__ == "__main__":
-    mig = MinesweeperInputGenerator("test_output_1x1_mine.txt")
-    mig.generate_field("1 1\n*\n")
+    mig = MinesweeperInputGenerator("test_output_100x100_all_mines.txt")
+    # mig.generate_field_with_string("1 1\n.\n")
+    mig.generate_field_uniform(100,100,True)
     mig.add_terminating_str()
     mig.write_output()
