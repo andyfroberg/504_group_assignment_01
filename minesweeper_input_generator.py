@@ -62,7 +62,7 @@ class MinesweeperInputGenerator:
         :return: None
         """
         with open(self.__output_path, "w", encoding='utf-8') as m:
-            m.write(self.__output_text)
+            m.write(self.__full_text)
 
     ######################################################
     ########### Unit Test Helper Methods #################
@@ -75,8 +75,7 @@ class MinesweeperInputGenerator:
 
 
 if __name__ == "__main__":
-    mig = MinesweeperInputGenerator("test_file_1.txt")
-    mig.generate_n_random_minefields(10)
+    mig = MinesweeperInputGenerator("test_output_1x1_mine.txt")
+    mig.generate_field("1 1\n*\n")
     mig.add_terminating_str()
-    # mig.generate_field("4 10\n***.....**\n***.....**\n***.....**\n***.....**\n")
-    print(mig.get_text())
+    mig.write_output()

@@ -82,10 +82,11 @@ class MineweeperSolverTests(unittest.TestCase):
     ########################################
 
     def setUp(self):
-        self.test_output_1x1_mine = open("test_output_1x1_mine.txt").readlines()
+        self.test_output_1x1_mine_file = open("test_output_1x1_mine.txt")
+        self.test_output_1x1_mine_data = self.test_output_1x1_mine_file.readlines()
 
     def tearDown(self):
-        self.test_file_1.close()
+        self.test_output_1x1_mine_file.close()
 
     def test_init_object_type(self):
         ms = MinesweeperSolver("mines.txt", "test_output.txt")
@@ -100,7 +101,7 @@ class MineweeperSolverTests(unittest.TestCase):
         ms = MinesweeperSolver("test_output_1x1_mine.txt", "test_output.txt")
         ms.solve_all_minefields()
 
-        correct_output = "Field #1:\n*\n"
+        correct_output = "Field #1:\n*\n\n"
         self.assertEqual(correct_output, ms.get_output_text(), True)
 
     ########################################
