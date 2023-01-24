@@ -20,6 +20,9 @@ class MinesweeperSolver:
         self.__text = self.read_input()
         self.__output_text = ""
         self.__field_count = 1
+        self.__current_field = []
+        self.__field_start = 0
+        self.__field_end = 0
 
     def read_input(self):
         """
@@ -38,79 +41,218 @@ class MinesweeperSolver:
         with open(self.__output_path, "w", encoding='utf-8') as m:
             m.write(self.__output_text)
 
-    def solve(self):
-        """
-        'Solves' the minesweeper puzzle given as input to the constructor.
-        Takes the full text of the input file (stored in self.__text), then
-        iterates through each character to solve the puzzle.
-        :return: None
-        """
-        for i in range(len(self.__text)):
+    def solve_all_minefields(self):
+        while self.__text[self.__field_end][0:] != "0 0\n":
+            self.get_next_minefield()
+            self.get_hints()
 
-            # Check if the end of the minefield data has been reached.
-            # (The assignment states, "The first field line where n = m = 0
-            # represents the end of input and should not be processed.")
-            if self.__text[i][0:-1] == "0 0":
-                break
+    def get_next_minefield(self):
 
-            # The first field marking should not have a new line before it.
-            # All other field markings should have a new line before them.
-            if i == 0 and self.__text[0][0] != "." \
-                    and self.__text[0][0] != "*":
-                self.__output_text += f'Field #{self.__field_count}:\n'
-                self.__field_count += 1
+        # Clear current minefield and set new start marker
+        self.__current_field = []
+        self.__field_start = self.__field_end
 
-            # Include a new line between each minefield output.
-            elif i != 0 and self.__text[i][0] != "." \
-                    and self.__text[i][0] != "*":
-                self.__output_text += f'\nField #{self.__field_count}:\n'
-                self.__field_count += 1
+        # Get the size of the next minefield
+        field_str = self.__text[self.__field_start].split("\n")
+        field_size = field_str[0].split(" ")
+        field_size[0], field_size[1] = int(field_size[0]), int(field_size[1])
+        self.__field_start += 1  # Go to the next line after reading the size
+        self.__field_end = self.__field_start + field_size[0]
 
-            # Not a field marking (i.e., is part of the minefield)
+        # read the input
+        for i in range(self.__field_start, self.__field_end):
+            # Remove "\n"
+            current_row_no_newline = self.__text[i].split("\n")[0]
+            current_list_no_newline = list(current_row_no_newline)
+            self.__current_field.append(current_list_no_newline)
+
+    def get_hints(self):
+        # The first field marking should not have a new line before it.
+        # All other field markings should have a new line before them.
+        self.__output_text += f'Field #{self.__field_count}:\n'
+        self.__field_count += 1
+
+        if self.__field_end - self.__field_start == 0:  # Single row
+            # if len(self.__current_field[self.__field_start]) <= 1:
+            if self.__current_field[self.__field_start][0] == "*":
+                return
             else:
-                self.__text[i] = list(self.__text[i])
-                for j in range(len(self.__text[i])):
-                    if self.__text[i][j] == "*":
-                        continue
-                    elif self.__text[i][j] == ".":
-                        self.__text[i][j] = "0"
-                        self.check_neighbors(i, j)
-                    else:  # \n
-                        s = ""
-                        self.__output_text += s.join(self.__text[i])
+                self.__current_field[self.__field_start][0] = "0"
+                return
+
+        for i in range(len(self.__current_field)):
+            for j in range(len(self.__current_field[i])):
+                if self.__current_field[i][j] == "*":
+                    continue
+                else:  # "."
+                    self.__current_field[i][j] = "0"
+                    self.check_neighbors(i, j)
+
+        for row in self.__current_field:
+            row_str = ""
+            for col in row:
+                row_str += col
+            self.__output_text += f"{row_str}\n"
+
+        # Add a newline between each field
+        self.__output_text += f"\n"
 
     def check_neighbors(self, i, j):
-        """
-        Checks each 'neighbor' around the current position in the text file, i
-        and j represent the row position and column position. If a "*" is in
-        an adjacent position, then the mine count of the current position is
-        incremented. This method uses a try except block to test all neighbors
-        (northwest, north, northeast, west, east, southwest, south, and
-        southeast) to handle any index out of bounds exceptions.
-        :param i: The current row 'position' in self.__text.
-        :param j: The current column 'position' in self.__text.
-        :return: None
-        """
-        for x in range(-1, 2):
-            for y in range(-1, 2):
-                try:
-                    if self.__text[i + x][j + y] == "*":
-                        self.__text[i][j] = str(int(self.__text[i][j]) + 1)
-                except IndexError:
-                    pass
+        # Special case where there is a single row/col
+        if len(self.__current_field) == 1 and len(
+                self.__current_field[i]) == 1:
+            if self.__current_field[i][j] == "*":
+                return
+            else:  # "."
+                self.__current_field[i][j] = "0"
+                return
 
-    def add_final_newline(self):
-        """
-        The "official_output.txt" file has two newlines at the bottom of the
-        file. In order to make the output identical, a final newline needs to
-        be added to the end of the output file.
-        :return: None
-        """
-        self.__output_text += "\n"
+        # Special case where there is a single row (of 1 > length <= 100)
+        if len(self.__current_field) == 1 and len(self.__current_field[i]) > 1:
+            if i == 0:
+                if j == 0:
+                    self.check_east(i, j)
+                elif j == len(self.__current_field[i]) - 1:
+                    self.check_west(i, j)
+                else:  # Middle columns
+                    self.check_west(i, j)
+                    self.check_east(i, j)
+            return
+
+        # Special case where there is a single column (of 1 > height <= 100)
+        if len(self.__current_field) > 1 and len(
+                self.__current_field[i]) == 1:
+            if i == 0:
+                self.check_south(i, j)
+            elif i == len(self.__current_field) - 1:
+                self.check_north(i, j)
+            else:  # Middle columns
+                self.check_north(i, j)
+                self.check_south(i, j)
+            return
+
+        if i == 0:  # Top row
+            if j == 0:  # Left column
+                self.check_east(i, j)
+                self.check_south(i, j)
+                self.check_southeast(i, j)
+            elif j == len(self.__current_field[i]) - 1:  # Right column
+                self.check_west(i, j)
+                self.check_southwest(i, j)
+                self.check_south(i, j)
+            else:  # Top row middle columns
+                self.check_east(i, j)
+                self.check_west(i, j)
+                self.check_southwest(i, j)
+                self.check_south(i, j)
+                self.check_southeast(i, j)
+        elif i == len(self.__current_field) - 1:  # Bottom row
+            if j == 0:  # Left column
+                self.check_north(i, j)
+                self.check_northeast(i, j)
+                self.check_east(i, j)
+            elif j == len(self.__current_field[i]) - 1:  # Right column
+                self.check_northwest(i, j)
+                self.check_north(i, j)
+                self.check_west(i, j)
+            else:  # Bottom row middle columns
+                self.check_northwest(i, j)
+                self.check_north(i, j)
+                self.check_northeast(i, j)
+                self.check_east(i, j)
+                self.check_west(i, j)
+        else:  # Middle rows
+            if j == 0:  # Left column
+                self.check_north(i, j)
+                self.check_northeast(i, j)
+                self.check_east(i, j)
+                self.check_south(i, j)
+                self.check_southeast(i, j)
+            elif j == len(self.__current_field[i]) - 1:  # Right column
+                self.check_northwest(i, j)
+                self.check_north(i, j)
+                self.check_west(i, j)
+                self.check_southwest(i, j)
+                self.check_south(i, j)
+            else:  # Middle rows middle columns
+                self.check_northwest(i, j)
+                self.check_north(i, j)
+                self.check_northeast(i, j)
+                self.check_east(i, j)
+                self.check_west(i, j)
+                self.check_southwest(i, j)
+                self.check_south(i, j)
+                self.check_southeast(i, j)
+
+    def check_north(self, i, j):
+        if self.__current_field[i - 1][j] == "*":
+            self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
+
+    def check_northwest(self, i, j):
+        if self.__current_field[i - 1][j - 1] == "*":
+            self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
+
+    def check_northeast(self, i, j):
+        if self.__current_field[i - 1][j + 1] == "*":
+            self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
+
+    def check_west(self, i, j):
+        if self.__current_field[i][j - 1] == "*":
+            self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
+
+    def check_east(self, i, j):
+        if self.__current_field[i][j + 1] == "*":
+            self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
+
+    def check_south(self, i, j):
+        if self.__current_field[i + 1][j] == "*":
+            self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
+
+    def check_southwest(self, i, j):
+        if self.__current_field[i + 1][j - 1] == "*":
+            self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
+
+    def check_southeast(self, i, j):
+        if self.__current_field[i + 1][j + 1] == "*":
+            self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
+
+    ######################################################
+    ########### Unit Test Helper Methods #################
+    ######################################################
+    # The following helper methods are for testing the program and include
+    # docstrings to satisfy the assignment requirements (even though the
+    # following methods are not part of the public interface).
+    def get_current_field(self):
+        return self.__current_field
+
+    def get_text(self):
+        return self.__text
+
+    def get_output_text(self):
+        return self.__output_text
+
+    def get_input_path(self):
+        return self.__input_path
+
+    def get_output_path(self):
+        return self.__output_path
+
+    def get_field_count(self):
+        return self.__field_count
+
+    def get_field_start(self):
+        return self.__field_start
+
+    def get_field_end(self):
+        return self.__field_end
+
+    def set_text(self, text):
+        self.__text = text
+
 
 
 if __name__ == "__main__":
-    m = MinesweeperSolver("mines.txt", "minesweeper_output.txt")
-    m.solve()
-    m.add_final_newline()
-    m.write_output()
+    ms = MinesweeperSolver("mines.txt", "minesweeper_output.txt")
+    print(ms.get_text())
+    ms.solve_all_minefields()
+    ms.write_output()
