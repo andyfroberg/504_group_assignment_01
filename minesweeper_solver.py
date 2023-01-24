@@ -42,12 +42,21 @@ class MinesweeperSolver:
             m.write(self.__output_text)
 
     def solve_all_minefields(self):
+        """
+        Loops through all minefields until the specified ending/terminal
+        characters ("0 0"), and calls the method to solve each minefield.
+        :return: None
+        """
         while self.__text[self.__field_end][0:] != "0 0\n":
             self.get_next_minefield()
             self.get_hints()
 
     def get_next_minefield(self):
-
+        """
+        Gets the next minefield from the full text (self.__text) that was
+        originally read in from the input file.
+        :return: None
+        """
         # Clear current minefield and set new start marker
         self.__current_field = []
         self.__field_start = self.__field_end
@@ -67,6 +76,11 @@ class MinesweeperSolver:
             self.__current_field.append(current_list_no_newline)
 
     def get_hints(self):
+        """
+        Iterates throught the current minefield and calls the
+        check_neighbors() method to "solve" the minefield.
+        :return: None
+        """
         # The first field marking should not have a new line before it.
         # All other field markings should have a new line before them.
         self.__output_text += f'Field #{self.__field_count}:\n'
@@ -98,6 +112,13 @@ class MinesweeperSolver:
         self.__output_text += f"\n"
 
     def check_neighbors(self, i, j):
+        """
+        Determines where the current cell is (based on the i, j coordinates)
+        and calls the correct method to check the neighbors of that cell.
+        :param i: The row coordinate of the current minefield
+        :param j: The column coordinate of the current minefield
+        :return: None
+        """
         # Special case where there is a single row/col
         if len(self.__current_field) == 1 and len(
                 self.__current_field[i]) == 1:
@@ -185,34 +206,97 @@ class MinesweeperSolver:
                 self.check_southeast(i, j)
 
     def check_north(self, i, j):
+        """
+        Checks whether the neighbor to the north of the current cell contains
+        a mine. If so, the hint count of the current cell is incremented.
+        :param i: The row coordinate of the current minefield
+        :param j: The column coordinate of the current minefield
+        :return: None
+        """
         if self.__current_field[i - 1][j] == "*":
             self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
 
     def check_northwest(self, i, j):
+        """
+        Checks whether the neighbor to the northwest of the current cell
+        contains a mine. If so, the hint count of the current cell is
+        incremented.
+        :param i: The row coordinate of the current minefield
+        :param j: The column coordinate of the current minefield
+        :return: None
+        """
         if self.__current_field[i - 1][j - 1] == "*":
             self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
 
     def check_northeast(self, i, j):
+        """
+        Checks whether the neighbor to the northeast of the current cell
+        contains a mine. If so, the hint count of the current cell is
+        incremented.
+        :param i: The row coordinate of the current minefield
+        :param j: The column coordinate of the current minefield
+        :return: None
+        """
         if self.__current_field[i - 1][j + 1] == "*":
             self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
 
     def check_west(self, i, j):
+        """
+        Checks whether the neighbor to the west of the current cell
+        contains a mine. If so, the hint count of the current cell is
+        incremented.
+        :param i: The row coordinate of the current minefield
+        :param j: The column coordinate of the current minefield
+        :return: None
+        """
         if self.__current_field[i][j - 1] == "*":
             self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
 
     def check_east(self, i, j):
+        """
+        Checks whether the neighbor to the east of the current cell
+        contains a mine. If so, the hint count of the current cell is
+        incremented.
+        :param i: The row coordinate of the current minefield
+        :param j: The column coordinate of the current minefield
+        :return: None
+        """
         if self.__current_field[i][j + 1] == "*":
             self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
 
     def check_south(self, i, j):
+        """
+        Checks whether the neighbor to the south of the current cell
+        contains a mine. If so, the hint count of the current cell is
+        incremented.
+        :param i: The row coordinate of the current minefield
+        :param j: The column coordinate of the current minefield
+        :return: None
+        """
         if self.__current_field[i + 1][j] == "*":
             self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
 
     def check_southwest(self, i, j):
+        """
+        Checks whether the neighbor to the southwest of the current cell
+        contains a mine. If so, the hint count of the current cell is
+        incremented.
+        :param i: The row coordinate of the current minefield
+        :param j: The column coordinate of the current minefield
+        :return: None
+        """
         if self.__current_field[i + 1][j - 1] == "*":
             self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
 
     def check_southeast(self, i, j):
+        """
+        Checks whether the neighbor to the southeast of the current cell
+        contains a mine. If so, the hint count of the current cell is
+        incremented.
+        :param i: The row coordinate of the current minefield
+        :param j: The column coordinate of the current minefield
+        :return: None
+        """
         if self.__current_field[i + 1][j + 1] == "*":
             self.__current_field[i][j] = str(int(self.__current_field[i][j]) + 1)
 
@@ -223,30 +307,69 @@ class MinesweeperSolver:
     # docstrings to satisfy the assignment requirements (even though the
     # following methods are not part of the public interface).
     def get_current_field(self):
+        """
+        Returns the current minefield.
+        :return: List of strings
+        """
         return self.__current_field
 
     def get_text(self):
+        """
+        Returns the full text read in from the input file.
+        :return: string - the full text of the input file
+        """
         return self.__text
 
     def get_output_text(self):
+        """
+        Returns the output text string
+        :return: string - the text that will be written to the output file
+        """
         return self.__output_text
 
     def get_input_path(self):
+        """
+        Returns the path of the file input.
+        :return: string - the file input path
+        """
         return self.__input_path
 
     def get_output_path(self):
+        """
+        Returns the path of the file output.
+        :return: string - the file output path
+        """
         return self.__output_path
 
     def get_field_count(self):
+        """
+        Returns the current field number.
+        :return: number - the count of the current field
+        """
         return self.__field_count
 
     def get_field_start(self):
+        """
+        Returns the current start marker of the full text input.
+        :return: number - the count of the start marker
+        """
         return self.__field_start
 
     def get_field_end(self):
+        """
+        Returns the current end marker of the full text input.
+        :return: number - the count of the end marker
+        """
         return self.__field_end
 
     def set_text(self, text):
+        """
+        Sets the text of the file. Used to set the text of this
+        MinesweeperSolver object without needing to read an input file
+        (used for testing).
+        :param text: string - the text of the input
+        :return: None
+        """
         self.__text = text
 
 

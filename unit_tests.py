@@ -118,7 +118,45 @@ class MineweeperSolverTests(unittest.TestCase):
     ########################################
     ########## FIKADU'S TESTS  #############
     ########################################
+    def test_output_100x100_all_mines(self):
+        ms = MinesweeperSolver("test_output_100x100_all_mines.txt",
+                               "test_output.txt")
+        ms.solve_all_minefields()
+        correct_output = "Field #1:\n*\n\n"
+        self.assertEqual(correct_output, ms.get_output_text(), True)
 
+    def test_output_100x100_blank(self):
+        ms = MinesweeperSolver("test_output_100x100_blank.txt",
+                               "test_output.txt")
+        ms.solve_all_minefields()
+        correct_output = "Field #1:\n*\n\n"
+        self.assertEqual(correct_output, ms.get_output_text(), True)
+
+    def test_output_100x1_all_mines(self):
+        ms = MinesweeperSolver("test_output_100x1_all_mines.txt",
+                               "test_output.txt")
+        ms.solve_all_minefields()
+        correct_output = "Field #1:\n*\n\n"
+        self.assertEqual(correct_output, ms.get_output_text(), True)
+
+    def test_output_100x1_blank(self):
+        ms = MinesweeperSolver("test_output_100x1_blank", "test_output.txt")
+        ms.solve_all_minefields()
+        correct_output = "Field #1:\n*\n\n"
+        self.assertEqual(correct_output, ms.get_output_text(), True)
+
+    def test_output_1x100_all_mines(self):
+        ms = MinesweeperSolver("test_output_1x100_all_mines",
+                               "test_output.txt")
+        ms.solve_all_minefields()
+        correct_output = "Field #1:\n*\n\n"
+        self.assertEqual(correct_output, ms.get_output_text(), True)
+
+    def test_output_1x100_blank(self):
+        ms = MinesweeperSolver("test_output_1x100_blank", "test_output.txt")
+        ms.solve_all_minefields()
+        correct_output = "Field #1:\n*\n\n"
+        self.assertEqual(correct_output, ms.get_output_text(), True)
 
     ##########################################
     ########## TEMESGEN'S TESTS  #############
